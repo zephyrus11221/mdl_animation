@@ -2,6 +2,7 @@ import mdl
 from display import *
 from matrix import *
 from draw import *
+from sys import exit
 
 """======== first_pass( commands, symbols ) ==========
 
@@ -20,7 +21,30 @@ from draw import *
 
   jdyrlandweaver
   ==================== """
+frames = 0
+basename = 'anim'
+knobs = []
+
 def first_pass( commands ):
+    if 'frames' in symbols:
+        i = 0
+        while (comm[i][0]!='frames')
+            i++
+        frames = commands[i][1]
+        if 'basename' in commands:
+            i = 0
+            while (comm[i][0]!='basename')
+                i++
+            basename = commands[i][1]
+        else:
+            print "No basename present, using default name (anim)."
+        second_pass(commands)
+    elif 'vary' in symbols:
+        print "Varying without frames. Invalid usage."
+        exit()
+    else:
+        print "No animation commands, making single frame."
+    return True
     pass
 
 
@@ -42,6 +66,18 @@ def first_pass( commands ):
   appropirate value. 
   ===================="""
 def second_pass( commands, num_frames ):
+    verror = 'Invalid variance range.'
+    for i in commands:
+        if i[0] = 'vary':
+            if i[2]>i[3]:
+                print verror + ' Start is greater than end.'
+                exit()
+            if i[3]>=frames:
+                print verror + ' End is greater than total frames'
+                exit()
+            if i[2]<0 or i[3]<0:
+                print verror + ' Negative bounds'
+                exit()
     pass
 
 
@@ -66,6 +102,7 @@ def run(filename):
     screen = new_screen()
     tmp = []
     step = 0.1
+
     for command in commands:
         print command
         c = command[0]

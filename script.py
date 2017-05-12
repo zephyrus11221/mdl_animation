@@ -23,7 +23,8 @@ from sys import exit
   ==================== """
 frames = 0
 basename = 'anim'
-knobs = []
+anim = False
+knobs = {}
 
 def first_pass( commands ):
     if 'frames' in symbols:
@@ -31,20 +32,22 @@ def first_pass( commands ):
         while (comm[i][0]!='frames')
             i++
         frames = commands[i][1]
-        if 'basename' in commands:
+        for x in range(frames)
+            knobs[x] = {}
+        if 'basename' in symbols:
             i = 0
             while (comm[i][0]!='basename')
                 i++
             basename = commands[i][1]
         else:
             print "No basename present, using default name (anim)."
+        anim = True
         second_pass(commands)
     elif 'vary' in symbols:
         print "Varying without frames. Invalid usage."
         exit()
     else:
         print "No animation commands, making single frame."
-    return True
     pass
 
 
@@ -78,6 +81,24 @@ def second_pass( commands, num_frames ):
             if i[2]<0 or i[3]<0:
                 print verror + ' Negative bounds'
                 exit()
+            val = []
+            symbols[i[1]][1] = i[4]
+            if i[4]<i[5]:
+                n = i[4]
+                t = (i[5]-i[4])/(i[3]-i[2])
+                iframe = i[2]
+                while n<i[5]+t:
+                    knobs[iframe][i[1]] = n
+                    iframe += 1
+                    n += t
+            else:
+                n = i[5]
+                t = (i[4]-i[5])/(i[3]-i[2])
+                while n>i[5]+t:
+                    knobs[iframe][i[1]] = n
+                    iframe += 1
+                    n -= t
+            knobs.append(val)
     pass
 
 
@@ -103,6 +124,8 @@ def run(filename):
     tmp = []
     step = 0.1
 
+    first_pass(commands)
+    if(!anim):
     for command in commands:
         print command
         c = command[0]

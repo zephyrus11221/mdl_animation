@@ -27,27 +27,31 @@ anim = False
 knobs = {}
 
 def first_pass( commands, symbols ):
-    if 'frames' in symbols:
-        i = 0
-        while (comm[i][0]!='frames'):
-            i+=1
+    i = 0
+    while (commands[i][0]!='frames' or i>len(commands)):
+        i+=1
+    if commands[i][0] == 'frames':
+        print 'wassup'
+        global frames
         frames = commands[i][1]
         for x in range(frames):
             knobs[x] = {}
-        if 'basename' in symbols:
-            i = 0
-            while (comm[i][0]!='basename'):
-                i+=1
+        i = 0
+        while (commands[i][0]!='basename' or i>len(commands)):
+            i+=1
+        if commands[i][0]=='basename':
+            global basename
             basename = commands[i][1]
         else:
             print "No basename present, using default name (anim)."
-        anim = True
-        second_pass(commands)
+        second_pass(commands, symbols, frames)
+        return True
     elif 'vary' in symbols:
         print "Varying without frames. Invalid usage."
         exit()
     else:
         print "No animation commands, making single frame."
+        return False
     pass
 
 
@@ -68,15 +72,17 @@ def first_pass( commands, symbols ):
   dictionary corresponding to the given knob with the
   appropirate value. 
   ===================="""
-def second_pass( commands, num_frames ):
+def second_pass( commands, symbols, num_frames ):
     verror = 'Invalid variance range.'
+    print num_frames
     for i in commands:
         if i[0] == 'vary':
             if i[2]>i[3]:
                 print verror + ' Start is greater than end.'
                 exit()
-            if i[3]>=frames:
+            if i[3]>=num_frames:
                 print verror + ' End is greater than total frames.'
+                print 'invalid: '+str(i[3])
                 exit()
             if i[2]<0 or i[3]<0:
                 print verror + ' Negative bounds.'
@@ -84,10 +90,15 @@ def second_pass( commands, num_frames ):
             val = []
             symbols[i[1]][1] = i[4]
             if i[4]<i[5]:
+                #print 'printing the bounds: ' + str(i[4])
+                #print i[5]-i[4]
+                #print 'printing the iteration: ' + str((i[5]-i[4])/(i[3]-i[2]))
                 n = i[4]
-                t = (i[5]-i[4])/(i[3]-i[2])
+                t = (float(i[5])-i[4])/(i[3]-i[2])
                 iframe = i[2]
-                while n<i[5]+t:
+                while n<i[5]:
+                    #print iframe
+                    #print 'printing n: ' + str(n)
                     knobs[iframe][i[1]] = n
                     iframe += 1
                     n += t
@@ -124,8 +135,10 @@ def run(filename):
     tmp = []
     step = 0.1
 
-    first_pass(commands, symbols)
+    anim = first_pass(commands, symbols)
+    print 'printing anim: ' + str(anim)
     if(not anim):
+        print 'oh'
         for command in commands:
             print command
             c = command[0]
@@ -181,7 +194,15 @@ def run(filename):
                 save_extension(screen, args[0])
     else:
         fn = 0
+        fname = basename
+        print fname
         while fn<frames:
+            if (fn<10):
+                fname = 'anim/' + basename + '00' + str(fn) + '.png'
+            elif(fn<100):
+                fname = 'anim/' + basename + '0' + str(fn) + '.png'
+            else:
+                fname = 'anim/' + basename + str(fn) + '.png'
             for knob in knobs[fn]:
                 symbols[knob] = knobs[fn][knob]
             for command in commands:
@@ -236,7 +257,7 @@ def run(filename):
                 elif c == 'rotate':
                     theta = args[1] * (math.pi/180)
                     if(type(args[-1]) is str):
-                        theta *= symbols[args-1]
+                        theta *= symbols[args[-1]]
                     if args[0] == 'x':
                         tmp = make_rotX(theta)
                     elif args[0] == 'y':
@@ -250,4 +271,6 @@ def run(filename):
                     stack.append([x[:] for x in stack[-1]] )
                 elif c == 'pop':
                     stack.pop()
-            save_extension(screen, 'anim/' + basename + frames + '.png')
+            print 'saving'
+            save_extension(screen, fname)
+            fn+= 1

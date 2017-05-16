@@ -46,10 +46,11 @@ def save_ppm( screen, fname ):
 
 def save_extension( screen, fname ):
     ppm_name = fname[:fname.find('.')] + '.ppm'
+    print fname
     save_ppm( screen, ppm_name )
     p = Popen( ['convert', ppm_name, fname ], stdin=PIPE, stdout = PIPE )
     p.communicate()
-    remove(ppm_name)
+    #remove(ppm_name)
 
 def display( screen ):
     ppm_name = 'pic.ppm'

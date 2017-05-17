@@ -77,6 +77,7 @@ def second_pass( commands, symbols, num_frames ):
     print num_frames
     for i in commands:
         if i[0] == 'vary':
+            print i[1]
             if i[2]>i[3]:
                 print verror + ' Start is greater than end.'
                 exit()
@@ -101,14 +102,20 @@ def second_pass( commands, symbols, num_frames ):
                     #print 'printing n: ' + str(n)
                     knobs[iframe][i[1]] = n
                     iframe += 1
-                    n += t
+                    n += t                
+
             else:
-                n = i[5]
-                t = (i[4]-i[5])/(i[3]-i[2])
-                while n>i[5]+t:
+                print 'yallo'
+                n = i[4]
+                t = (float(i[5])-i[4])/(i[3]-i[2])
+                iframe = i[2]
+                while n>i[5]:
+                    #print iframe
+                    #print 'printing n: ' + str(n)
                     knobs[iframe][i[1]] = n
                     iframe += 1
-                    n -= t
+                    n += t                
+    print knobs
     pass
 
 
@@ -247,10 +254,19 @@ def run(filename):
                     stack[-1] = [x[:] for x in tmp]
                     tmp = []
                 elif c == 'scale':
+                    nargs = []
                     if(type(args[-1]) is str):
-                        for x in args[:-1]:
-                            x *= symbols[args[-1]]
-                    tmp = make_scale(args[0], args[1], args[2])
+                        print 'yello'
+                        print args[-1]
+                        for x in range(len(args)-1):
+                            print symbols[args[-1]]
+                            print args[x]
+                            nargs.append(args[x] * symbols[args[-1]])
+                    else:
+                        nargs = args
+                    print args
+                    print nargs
+                    tmp = make_scale(nargs[0], nargs[1], nargs[2])
                     matrix_mult(stack[-1], tmp)
                     stack[-1] = [x[:] for x in tmp]
                     tmp = []

@@ -28,7 +28,7 @@ knobs = {}
 
 def first_pass( commands, symbols ):
     i = 0
-    while (commands[i][0]!='frames' or i>len(commands)):
+    while (commands[i][0]!='frames' and i<len(commands)-1):
         i+=1
     if commands[i][0] == 'frames':
         print 'wassup'
@@ -37,7 +37,7 @@ def first_pass( commands, symbols ):
         for x in range(frames):
             knobs[x] = {}
         i = 0
-        while (commands[i][0]!='basename' or i>len(commands)):
+        while (commands[i][0]!='basename' and i<len(commands)-1):
             i+=1
         if commands[i][0]=='basename':
             global basename
@@ -264,11 +264,15 @@ def run(filename):
                             nargs.append(args[x] * symbols[args[-1]])
                     else:
                         nargs = args
+                    print 'printing args/nargs:'
                     print args
                     print nargs
                     tmp = make_scale(nargs[0], nargs[1], nargs[2])
+                    print_matrix(tmp)
+                    print_matrix(stack[-1])
                     matrix_mult(stack[-1], tmp)
                     stack[-1] = [x[:] for x in tmp]
+                    print_matrix(stack[-1])
                     tmp = []
                 elif c == 'rotate':
                     theta = args[1] * (math.pi/180)
@@ -287,6 +291,11 @@ def run(filename):
                     stack.append([x[:] for x in stack[-1]] )
                 elif c == 'pop':
                     stack.pop()
+            tmp = new_matrix()
+            ident(tmp)
+            stack = [ [x[:] for x in tmp] ]
+            tmp = []
             print 'saving'
             save_extension(screen, fname)
+            screen = new_screen()
             fn+= 1

@@ -1,0 +1,9 @@
+frames 60
+basename drawing
+push
+rotate z 360 roll
+move 600 0 0 slide
+move -50 50 0
+sphere 0 0 0 50 
+vary slide 0 59 0 1
+vary roll 0 59 0 10

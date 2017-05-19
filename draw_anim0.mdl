@@ -1,9 +1,27 @@
 frames 60
 basename drawing
 push
-rotate z 360 roll
-move 600 0 0 slide
-move -50 50 0
+move 740 0 0 slide
+move -50 250 0
+rotate z -360 roll
 sphere 0 0 0 50 
+push
+move -120 0 0
+push
+rotate z 360 roll
+rotate x 90
+torus 0 0 0 20 50
+pop
+pop
+move 120 0 0
+push
+rotate z 360 roll
+rotate x 90
+torus 0 0 0 20 50
+pop
+pop
+push
+rotate y 360 roll
+sphere -120 0 0 20
 vary slide 0 59 0 1
-vary roll 0 59 0 10
+vary roll 0 59 0 3

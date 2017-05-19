@@ -20,7 +20,7 @@ def draw_polygons( matrix, screen, color ):
         normal = calculate_normal(matrix, point)[:]
         #print normal
         if True:
-            print matrix[point]
+            #print matrix[point]
             draw_line( int(matrix[point][0]),
                        int(matrix[point][1]),
                        int(matrix[point+1][0]),

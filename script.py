@@ -246,10 +246,20 @@ def run(filename):
                     draw_polygons(tmp, screen, color)
                     tmp = []
                 elif c == 'move':
+                    nargs = []
                     if(type(args[-1]) is str):
-                        for x in args[:-1]:
-                            x *= symbols[args[-1]]
-                    tmp = make_translate(args[0], args[1], args[2])
+                        print 'yello'
+                        print args[-1]
+                        for x in range(len(args)-1):
+                            print symbols[args[-1]]
+                            print args[x]
+                            nargs.append(args[x] * symbols[args[-1]])
+                    else:
+                        nargs = args
+                    print 'printing args/nargs:'
+                    print args
+                    print nargs
+                    tmp = make_translate(nargs[0], nargs[1], nargs[2])
                     matrix_mult(stack[-1], tmp)
                     stack[-1] = [x[:] for x in tmp]
                     tmp = []
